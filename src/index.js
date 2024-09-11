@@ -479,6 +479,18 @@ export class Engine extends EventEmitter {
         }
     }
 
+    addBlockPushOverlap(id, x, y = 0, z = 0) {
+      if (x.length) {
+        this.entities.pushTerrainBlocked(x[0], x[1], x[2])
+        this.world.setBlockID(id, x[0], x[1], x[2])
+        return id
+    } else {
+      this.entities.pushTerrainBlocked(x, y, z)
+        this.world.setBlockID(id, x, y, z)
+        return id
+    }
+    }
+
 
 
 

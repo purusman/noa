@@ -333,7 +333,26 @@ export class Entities extends ECS {
         return false
     }
 
-
+    pushTerrainBlocked(x, y, z) {
+      var off = this.noa.worldOriginOffset
+        var xlocal = Math.floor(x - off[0])
+        var ylocal = Math.floor(y - off[1])
+        var zlocal = Math.floor(z - off[2])
+        var blockExt = [
+            xlocal + 0.001, ylocal + 0.001, zlocal + 0.001,
+            xlocal + 0.999, ylocal + 0.999, zlocal + 0.999,
+        ]
+        var list = this.getStatesList(this.names.collideTerrain)
+        for (var i = 0; i < list.length; i++) {
+            var id = list[i].__id
+            var ext = this.getPositionData(id)._extents
+            if (extentsOverlap(blockExt, ext)) {
+              var currentPos = this.noa.entities.getPosition(id)
+              currentPos[1] = y + 1
+              this.noa.entities.setPosition(id, currentPos)
+            }
+        }
+    }
 
     /** 
      * Gets an array of all entities overlapping the given AABB

@@ -22,7 +22,7 @@ export class Chunk {
     _isFull: boolean;
     _isEmpty: boolean;
     _wholeLayerVoxel: any[];
-    _neighbors: any;
+    _neighbors: ndarray.NdArray<any[]>;
     _neighborCount: number;
     _timesMeshed: number;
     /** @internal */
@@ -35,6 +35,7 @@ export class Chunk {
     dispose(): void;
 }
 export namespace Chunk {
-    function _createVoxelArray(size: any): any;
+    function _createVoxelArray(size: any): ndarray.NdArray<Uint16Array>;
 }
+import ndarray from 'ndarray';
 import { LocationQueue } from './util';

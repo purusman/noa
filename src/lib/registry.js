@@ -186,10 +186,14 @@ export class Registry {
             var alpha = 1.0
             var color = opts.color || [1.0, 1.0, 1.0]
             if (color.length === 4) alpha = color.pop()
-            if (texURL) color = null
+            if (texURL) {
+              matColorLookup[matID] = null
+            }
+            else {
+              matColorLookup[matID] = color
+            }
 
             // populate lookup arrays for terrain meshing
-            matColorLookup[matID] = color
             matAtlasIndexLookup[matID] = opts.atlasIndex
 
             matDefs[matID] = {
@@ -256,6 +260,10 @@ export class Registry {
          */
         this.getMaterialData = function (matID) {
             return matDefs[matID]
+        }
+
+        this.isHasMaterial = function (matID) {
+            return !!matDefs[matID]
         }
 
 

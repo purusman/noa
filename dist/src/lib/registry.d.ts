@@ -74,6 +74,7 @@ export class Registry {
         atlasIndex: number;
         renderMat: any;
     };
+    isHasMaterial: (matID: any) => boolean;
     /**
      * Given a texture URL, does any material using that
      * texture need alpha?

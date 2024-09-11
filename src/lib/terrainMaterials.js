@@ -149,6 +149,7 @@ function createTerrainMat(self, blockMatID = 0) {
     var texURL = matInfo.texture
     var sampling = Texture.NEAREST_SAMPLINGMODE
     var tex = new Texture(texURL, scene, true, false, sampling)
+    mat.alpha = matInfo.alpha
     if (matInfo.texHasAlpha) tex.hasAlpha = true
     mat.diffuseTexture = tex
 
