@@ -107,6 +107,13 @@ export class Entities extends ECS {
      * @type {(id1:number, id2:number) => void}
      */
     onPairwiseEntityCollision: (id1: number, id2: number) => void;
+    /**
+     * @param {number} entID
+     * @param {string} compName
+     * @param {any} state
+     * @returns {ECS}
+    */
+    addComponent: (entID: number, compName: string, state: any) => Entities;
     /** Set an entity's position, and update all derived state.
      *
      * In general, always use this to set an entity's position unless
@@ -150,6 +157,7 @@ export class Entities extends ECS {
      * `collidesTerrain` component)
     */
     isTerrainBlocked(x: any, y: any, z: any): boolean;
+    pushTerrainBlocked(x: any, y: any, z: any): void;
     /**
      * Gets an array of all entities overlapping the given AABB
     */

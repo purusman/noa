@@ -182,6 +182,7 @@ export class Engine extends EventEmitter {
      * Adds a block, unless there's an entity in the way.
     */
     addBlock(id: any, x: any, y?: number, z?: number): any;
+    addBlockPushOverlap(id: any, x: any, y?: number, z?: number): any;
     /**
      * Precisely converts a world position to the current internal
      * local frame of reference.
