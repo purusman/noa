@@ -165,10 +165,9 @@ export class World extends EventEmitter {
 
         // coordinate converter functions - default versions first:
         var cs = this._chunkSize
-        /** @internal */
-        this._coordsToChunkIndexes = chunkCoordsToIndexesGeneral
-        /** @internal */
-        this._coordsToChunkLocals = chunkCoordsToLocalsGeneral
+        this.coordsToChunkIndexes = chunkCoordsToIndexesGeneral
+
+        this.coordsToChunkLocals = chunkCoordsToLocalsGeneral
 
         // when chunk size is a power of two, override with bit-twiddling:
         var powerOfTwo = ((cs & cs - 1) === 0)
@@ -177,8 +176,8 @@ export class World extends EventEmitter {
             this._coordShiftBits = Math.log2(cs) | 0
             /** @internal */
             this._coordMask = (cs - 1) | 0
-            this._coordsToChunkIndexes = chunkCoordsToIndexesPowerOfTwo
-            this._coordsToChunkLocals = chunkCoordsToLocalsPowerOfTwo
+            this.coordsToChunkIndexes = chunkCoordsToIndexesPowerOfTwo
+            this.coordsToChunkLocals = chunkCoordsToLocalsPowerOfTwo
         }
     }
 }
@@ -200,19 +199,25 @@ export class World extends EventEmitter {
 */
 
 World.prototype.getBlockID = function (x = 0, y = 0, z = 0) {
-    var [ci, cj, ck] = this._coordsToChunkIndexes(x, y, z)
+    var [ci, cj, ck] = this.coordsToChunkIndexes(x, y, z)
     var chunk = this._storage.getChunkByIndexes(ci, cj, ck)
     if (!chunk) return 0
-    var [i, j, k] = this._coordsToChunkLocals(x, y, z)
+    var [i, j, k] = this.coordsToChunkLocals(x, y, z)
     return chunk.voxels.get(i, j, k)
 }
 
 World.prototype.getBlockSolidity = function (x = 0, y = 0, z = 0) {
-    var [ci, cj, ck] = this._coordsToChunkIndexes(x, y, z)
+    var [ci, cj, ck] = this.coordsToChunkIndexes(x, y, z)
     var chunk = this._storage.getChunkByIndexes(ci, cj, ck)
     if (!chunk) return false
-    var [i, j, k] = this._coordsToChunkLocals(x, y, z)
+    var [i, j, k] = this.coordsToChunkLocals(x, y, z)
     return !!chunk.getSolidityAt(i, j, k)
+}
+
+World.prototype.getChunkByCoords = function (x = 0, y = 0, z = 0) {
+    var [ci, cj, ck] = this.coordsToChunkIndexes(x, y, z)
+    var chunk = this._storage.getChunkByIndexes(ci, cj, ck)
+    return chunk
 }
 
 World.prototype.getBlockOpacity = function (x = 0, y = 0, z = 0) {
@@ -232,10 +237,10 @@ World.prototype.getBlockProperties = function (x = 0, y = 0, z = 0) {
 
 
 World.prototype.setBlockID = function (id = 0, x = 0, y = 0, z = 0) {
-    var [ci, cj, ck] = this._coordsToChunkIndexes(x, y, z)
+    var [ci, cj, ck] = this.coordsToChunkIndexes(x, y, z)
     var chunk = this._storage.getChunkByIndexes(ci, cj, ck)
     if (!chunk) return
-    var [i, j, k] = this._coordsToChunkLocals(x, y, z)
+    var [i, j, k] = this.coordsToChunkLocals(x, y, z)
     return chunk.set(i, j, k, id)
 }
 
@@ -332,9 +337,24 @@ World.prototype.invalidateVoxelsInAABB = function (box) {
  */
 World.prototype.manuallyLoadChunk = function (x = 0, y = 0, z = 0) {
     if (!this.manuallyControlChunkLoading) throw manualErr
-    var [i, j, k] = this._coordsToChunkIndexes(x, y, z)
+    var [i, j, k] = this.coordsToChunkIndexes(x, y, z)
     this._chunksKnown.add(i, j, k)
     this._chunksToRequest.add(i, j, k)
+}
+
+/** When manually controlling chunk loading, tells the engine that the
+ * chunk at the specified indexes needs to be created and loaded.
+ * @param i, j, k
+ * @returns {boolean} - whether the chunk was added to the request queue
+ */
+World.prototype.manuallyLoadChunkByIndexes = function (i = 0, j = 0, k = 0) {
+    if (!this.manuallyControlChunkLoading) return false
+    if (!this._chunksKnown.includes(i, j, k)) {
+        this._chunksKnown.add(i, j, k)
+        this._chunksToRequest.add(i, j, k)
+        return true
+    }
+    return false
 }
 
 /** When manually controlling chunk loading, tells the engine that the 
@@ -344,7 +364,15 @@ World.prototype.manuallyLoadChunk = function (x = 0, y = 0, z = 0) {
  */
 World.prototype.manuallyUnloadChunk = function (x = 0, y = 0, z = 0) {
     if (!this.manuallyControlChunkLoading) throw manualErr
-    var [i, j, k] = this._coordsToChunkIndexes(x, y, z)
+    var [i, j, k] = this.coordsToChunkIndexes(x, y, z)
+    this._chunksToRemove.add(i, j, k)
+    this._chunksToMesh.remove(i, j, k)
+    this._chunksToRequest.remove(i, j, k)
+    this._chunksToMeshFirst.remove(i, j, k)
+}
+
+World.prototype.manuallyUnloadChunkByIndexes = function (i = 0, j = 0, k = 0) {
+    if (!this.manuallyControlChunkLoading) throw manualErr
     this._chunksToRemove.add(i, j, k)
     this._chunksToMesh.remove(i, j, k)
     this._chunksToRequest.remove(i, j, k)
@@ -457,7 +485,7 @@ World.prototype.render = function () {
 /** @internal */
 World.prototype._getChunkByCoords = function (x = 0, y = 0, z = 0) {
     // let internal modules request a chunk object
-    var [i, j, k] = this._coordsToChunkIndexes(x, y, z)
+    var [i, j, k] = this.coordsToChunkIndexes(x, y, z)
     return this._storage.getChunkByIndexes(i, j, k)
 }
 
@@ -494,7 +522,7 @@ World.prototype._queueChunkForRemesh = function (chunk) {
 */
 function getPlayerChunkIndexes(world) {
     var [x, y, z] = world.noa.entities.getPosition(world.noa.playerEntity)
-    return world._coordsToChunkIndexes(x, y, z)
+    return world.coordsToChunkIndexes(x, y, z)
 }
 
 
@@ -624,8 +652,8 @@ var meshCheckIndex = 0
  * @param {World} world 
 */
 function invalidateChunksInBox(world, box) {
-    var min = world._coordsToChunkIndexes(box.base[0], box.base[1], box.base[2])
-    var max = world._coordsToChunkIndexes(box.max[0], box.max[1], box.max[2])
+    var min = world.coordsToChunkIndexes(box.base[0], box.base[1], box.base[2])
+    var max = world.coordsToChunkIndexes(box.max[0], box.max[1], box.max[2])
     for (var i = 0; i < 3; i++) {
         if (!Number.isFinite(box.base[i])) min[i] = box.base[i]
         if (!Number.isFinite(box.max[i])) max[i] = box.max[i]

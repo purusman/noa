@@ -109,16 +109,15 @@ export class World extends EventEmitter {
     _chunksSortedLocs: LocationQueue;
     /** @internal */
     _storage: ChunkStorage;
-    /** @internal */
-    _coordsToChunkIndexes: typeof chunkCoordsToIndexesGeneral;
-    /** @internal */
-    _coordsToChunkLocals: typeof chunkCoordsToLocalsPowerOfTwo;
+    coordsToChunkIndexes: typeof chunkCoordsToIndexesGeneral;
+    coordsToChunkLocals: typeof chunkCoordsToLocalsPowerOfTwo;
     /** @internal */
     _coordShiftBits: number;
     /** @internal */
     _coordMask: number;
     getBlockID(x?: number, y?: number, z?: number): any;
     getBlockSolidity(x?: number, y?: number, z?: number): boolean;
+    getChunkByCoords(x?: number, y?: number, z?: number): Chunk;
     getBlockOpacity(x?: number, y?: number, z?: number): any;
     getBlockFluidity(x?: number, y?: number, z?: number): any;
     getBlockProperties(x?: number, y?: number, z?: number): any;
@@ -163,11 +162,18 @@ export class World extends EventEmitter {
      */
     manuallyLoadChunk(x?: number, y?: number, z?: number): void;
     /** When manually controlling chunk loading, tells the engine that the
+     * chunk at the specified indexes needs to be created and loaded.
+     * @param i, j, k
+     * @returns {boolean} - whether the chunk was added to the request queue
+     */
+    manuallyLoadChunkByIndexes(i?: number, j?: number, k?: number): boolean;
+    /** When manually controlling chunk loading, tells the engine that the
      * chunk containing the specified (x,y,z) needs to be unloaded and disposed.
      * > Note: throws unless `noa.world.manuallyControlChunkLoading` is set.
      * @param x, y, z
      */
     manuallyUnloadChunk(x?: number, y?: number, z?: number): void;
+    manuallyUnloadChunkByIndexes(i?: number, j?: number, k?: number): void;
     /** @internal */
     tick(): void;
     /** @internal */
