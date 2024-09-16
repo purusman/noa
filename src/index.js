@@ -616,6 +616,7 @@ export class Engine extends EventEmitter {
         var result = this._pickResult
         var rpos = result._localPosition
         var rnorm = result.normal
+        debugger
         var hit = raycast(testVoxel, pos, dir, dist, rpos, rnorm)
         if (!hit) return null
         // position is right on a voxel border - adjust it so that flooring works reliably
