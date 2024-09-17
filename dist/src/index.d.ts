@@ -245,6 +245,24 @@ export class Engine extends EventEmitter {
         normal: number[];
         _localPosition: number[];
     };
+    /**
+     * Do a manual raycast in local coords.
+     * See `/docs/positions.md` for more info.
+     * @param {number[]} pos where to pick from (default: player's eye pos)
+     * @param {number[]} dir direction to pick along (default: camera vector)
+     * @param {number} dist pick distance (default: `noa.blockTestDistance`)
+     * @param {(x: number, y:number, z: number) => boolean} blockTestFunction which voxel IDs can be picked (default: any solid voxel)
+     * @returns { null | {
+    *      position: number[],
+    *      normal: number[],
+    *      _localPosition: number[],
+    * }}
+    */
+    manualLocalPick(pos: number[], dir: number[], dist: number, blockTestFunction: (x: number, y: number, z: number) => boolean): null | {
+        position: number[];
+        normal: number[];
+        _localPosition: number[];
+    };
 }
 import { EventEmitter } from 'events';
 import { Container } from './lib/container';
