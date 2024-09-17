@@ -114,6 +114,13 @@ export class Entities extends ECS {
      * @returns {ECS}
     */
     addComponent: (entID: number, compName: string, state: any) => Entities;
+    /**
+     * @param {number} entID
+     * @param {string} compName
+     * @param {any} state
+     * @returns {ECS}
+    */
+    addComponent2: (entID: number, compName: string, state: any) => Entities;
 
     /**
      * @param {compDefn} any
