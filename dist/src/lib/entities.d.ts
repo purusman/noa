@@ -178,5 +178,12 @@ export class Entities extends ECS {
      * Helper to set up a general entity, and populate with some common components depending on arguments.
     */
     add(position?: any, width?: number, height?: number, mesh?: any, meshOffset?: any, doPhysics?: boolean, shadow?: boolean): number;
+
+    /**
+     * Remove an entity from the world.
+     * @param {number} id
+     * @returns {Entities}
+     */
+    deleteEntity(id: any): Entities;
 }
 import ECS from 'ent-comp';
