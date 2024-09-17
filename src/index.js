@@ -627,6 +627,46 @@ export class Engine extends EventEmitter {
         return result
     }
 
+    /**
+     * Do a manual raycast in local coords. 
+     * See `/docs/positions.md` for more info.
+     * @param {number[]} pos where to pick from (default: player's eye pos)
+     * @param {number[]} dir direction to pick along (default: camera vector)
+     * @param {number} dist pick distance (default: `noa.blockTestDistance`)
+     * @param {(x: number, y:number, z: number) => boolean} blockTestFunction which voxel IDs can be picked (default: any solid voxel)
+     * @returns { null | {
+    *      position: number[],
+    *      normal: number[],
+    *      _localPosition: number[],
+    * }}
+    */
+
+    manualLocalPick(pos, dir, dist, blockTestFunction) {
+        if (dist === 0) return null
+        var testFn = blockTestFunction || this.registry.getBlockSolidity
+        var world = this.world
+        var off = this.worldOriginOffset
+        var testVoxel = function (x, y, z) {
+            return testFn(x + off[0], y + off[1], z + off[2])
+        }
+        if (!pos) pos = this.camera._localGetTargetPosition()
+        dir = dir || this.camera.getDirection()
+        dist = dist || -1
+        if (dist < 0) dist = this.blockTestDistance
+        var result = this._pickResult
+        var rpos = result._localPosition
+        var rnorm = result.normal
+        debugger
+        var hit = raycast(testVoxel, pos, dir, dist, rpos, rnorm)
+        if (!hit) return null
+        // position is right on a voxel border - adjust it so that flooring works reliably
+        // adjust along normal direction, i.e. away from the block struck
+        vec3.scaleAndAdd(rpos, rpos, rnorm, 0.01)
+        // add global result
+        this.localToGlobal(rpos, result.position)
+        return result
+    }
+
 }
 
 
