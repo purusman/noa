@@ -115,9 +115,17 @@ export class Entities extends ECS {
     */
     addComponent: (entID: number, compName: string, state: any) => Entities;
 
+    /**
+     * @param {compDefn} any
+     * @returns {string}
+    */
     createComponent(compDefn: any): string;
 
-    getStateAccessor(name: any): (id: number) => any;
+    /**
+     * @param {string} name
+     * @returns {(id:number) => any}
+    */
+    getStateAccessor(name: string): (id: number) => any;
     /** Set an entity's position, and update all derived state.
      *
      * In general, always use this to set an entity's position unless
