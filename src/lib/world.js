@@ -619,6 +619,42 @@ export function findDistantChunksToRemove(world, ci, cj, ck) {
 }
 var removeCheckIndex = 0
 
+/** 
+ * Incrementally scan known chunks for any that are no longer in range.
+ * Assume that the order they're removed in isn't very important.
+ * @param {World} world
+ * @param {number} ci
+ * @param {number} cj
+ * @param {number} ck
+ * @param {(x : number, y: number, z: number) => boolean} distCheck
+*/
+export function findDistantChunksToRemove2(world, ci, cj, ck, distCheck) {
+    var toRemove = world._chunksToRemove
+    var numQueued = toRemove.count() + world._chunksInvalidated.count()
+    var maxQueued = 50
+    if (numQueued >= maxQueued) return
+
+    var knownArr = world._chunksKnown.arr
+    if (knownArr.length === 0) return
+    var maxIter = Math.min(100, knownArr.length / 10)
+    var found = false
+    for (var ct = 0; ct < maxIter; ct++) {
+        var [i, j, k] = knownArr[removeCheckIndex++ % knownArr.length]
+        if (toRemove.includes(i, j, k)) continue
+        if (distCheck(i - ci, j - cj, k - ck)) continue
+        // flag chunk for removal and remove it from work queues
+        world._chunksToRemove.add(i, j, k)
+        world._chunksToRequest.remove(i, j, k)
+        world._chunksToMesh.remove(i, j, k)
+        world._chunksToMeshFirst.remove(i, j, k)
+        found = true
+        numQueued++
+        if (numQueued > maxQueued) break
+    }
+    removeCheckIndex = removeCheckIndex % knownArr.length
+    if (found) sortQueueByDistanceFrom(world, toRemove, ci, cj, ck)
+}
+
 
 /** 
  * Incrementally look for chunks that could be re-meshed

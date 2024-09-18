@@ -5,6 +5,16 @@
 */
 export function findDistantChunksToRemove(world: World, ci: any, cj: any, ck: any): void;
 /**
+ * Incrementally scan known chunks for any that are no longer in range.
+ * Assume that the order they're removed in isn't very important.
+ * @param {World} world
+ * @param {number} ci
+ * @param {number} cj
+ * @param {number} ck
+ * @param {(x : number, y: number, z: number) => boolean} distCheck
+*/
+export function findDistantChunksToRemove2(world: World, ci: number, cj: number, ck: number, distCheck: (x: number, y: number, z: number) => boolean): void;
+/**
  * `noa.world` - manages world data, chunks, voxels.
  *
  * This module uses the following default options (from the options
