@@ -346,6 +346,7 @@ export class Engine extends EventEmitter {
     tick(dt) {
         dt *= this.timeScale || 1
 
+        this.emit('beforeTick', dt)
         // note dt is a fixed value, not an observed delay
         if (this._paused) {
             if (this.world.worldGenWhilePaused) this.world.tick()
