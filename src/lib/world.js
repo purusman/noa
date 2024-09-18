@@ -638,7 +638,9 @@ function findChunksToMesh(world) {
         if (res) numQueued++
         if (numQueued > maxQueued) break
     }
-    meshCheckIndex %= knownArr.length
+    if (knownArr.length > 0) {
+        meshCheckIndex %= knownArr.length
+    }
 }
 var meshCheckIndex = 0
 
