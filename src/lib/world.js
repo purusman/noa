@@ -590,7 +590,7 @@ var checkOneLocation = (world, i, j, k) => {
  * Assume that the order they're removed in isn't very important.
  * @param {World} world 
 */
-function findDistantChunksToRemove(world, ci, cj, ck) {
+export function findDistantChunksToRemove(world, ci, cj, ck) {
     var distCheck = world._remDistanceFn
     var toRemove = world._chunksToRemove
     var numQueued = toRemove.count() + world._chunksInvalidated.count()
