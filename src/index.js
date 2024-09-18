@@ -217,16 +217,9 @@ export class Engine extends EventEmitter {
         body.gravityMultiplier = 2 // less floaty
         body.autoStep = opts.playerAutoStep // auto step onto blocks
 
-        // input component - sets entity's movement state from key inputs
-        ents.addComponent(this.playerEntity, ents.names.receivesInputs)
-
         // add a component to make player mesh fade out when zooming in
         ents.addComponent(this.playerEntity, ents.names.fadeOnZoom)
 
-        // movement component - applies movement forces
-        ents.addComponent(this.playerEntity, ents.names.movement, {
-            airJumps: 1
-        })
 
         /** Manages the game's camera, view angle, sensitivity, etc. */
         this.camera = new Camera(this, opts)
@@ -313,8 +306,6 @@ export class Engine extends EventEmitter {
             this.vec3 = vec3
             /** @internal */
             this.ndarray = ndarray
-            // gameplay tweaks
-            ents.getMovement(1).airJumps = 999
             // decorate window while making TS happy
             var win = /** @type {any} */ (window)
             win.noa = this

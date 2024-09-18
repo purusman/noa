@@ -11,10 +11,8 @@ import collideTerrainComp from "../components/collideTerrain.js"
 import fadeOnZoomComp from "../components/fadeOnZoom.js"
 import followsEntityComp from "../components/followsEntity.js"
 import meshComp from "../components/mesh.js"
-import movementComp from "../components/movement.js"
 import physicsComp from "../components/physics.js"
 import positionComp from "../components/position.js"
-import receivesInputsComp from "../components/receivesInputs.js"
 import shadowComp from "../components/shadow.js"
 import smoothCameraComp from "../components/smoothCamera.js"
 
@@ -77,10 +75,8 @@ export class Entities extends ECS {
             fadeOnZoom: fadeOnZoomComp,
             followsEntity: followsEntityComp,
             mesh: meshComp,
-            movement: movementComp,
             physics: physicsComp,
             position: positionComp,
-            receivesInputs: receivesInputsComp,
             shadow: shadowComp,
             smoothCamera: smoothCameraComp,
         }
@@ -165,12 +161,6 @@ export class Entities extends ECS {
          * @type {(id:number) => {mesh:any, offset:number[]}}
         */
         this.getMeshData = this.getStateAccessor(this.names.mesh)
-
-        /**
-         * Returns the entity's `movement` component state
-         * @type {(id:number) => import('../components/movement').MovementState}
-        */
-        this.getMovement = this.getStateAccessor(this.names.movement)
 
         /**
          * Returns the entity's `collideTerrain` component state
