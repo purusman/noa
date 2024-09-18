@@ -734,6 +734,10 @@ function processMeshingQueue(world, firstOnly) {
     if (world._chunksToRemove.includes(i, j, k)) return
     var chunk = world._storage.getChunkByIndexes(i, j, k)
     if (chunk) doChunkRemesh(world, chunk)
+
+    if (world._chunksToMeshFirst.isEmpty() && world._chunksToMesh.isEmpty() && world._chunksToRequest.isEmpty()) {
+        world.emit('allChunkMeshed')
+    }
 }
 
 
