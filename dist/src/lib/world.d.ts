@@ -1,9 +1,4 @@
 /**
- * Gradually scan neighborhood chunk locs; add missing ones to "toRequest".
- * @param {World} world
-*/
-export function findChunksToRequest2(world: World, ci: any, cj: any, ck: any): void;
-/**
  * Incrementally scan known chunks for any that are no longer in range.
  * Assume that the order they're removed in isn't very important.
  * @param {World} world

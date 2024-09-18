@@ -17,9 +17,6 @@ var defaultOptions = {
     chunkRemoveDistance: [3, 3],        // [horizontal, vertical]
     worldGenWhilePaused: false,
     manuallyControlChunkLoading: false,
-    minY :-1,
-    maxY: 5,
-    chunkSortingDistFn: defaultSortDistance,
 }
 
 /**
@@ -76,7 +73,7 @@ export class World extends EventEmitter {
          *   (i, j, k) => 1 // return a smaller number for chunks to process first
          * ```
          */
-        this.chunkSortingDistFn = opts.chunkSortingDistFn
+        this.chunkSortingDistFn = defaultSortDistance
 
         /**
          * Set this higher to cause chunks not to mesh until they have some neighbors.
@@ -569,51 +566,12 @@ function findChunksToRequest(world, ci, cj, ck) {
     sortQueueByDistanceFrom(world, toRequest, ci, cj, ck, false)
 }
 
-/** 
- * Gradually scan neighborhood chunk locs; add missing ones to "toRequest".
- * @param {World} world 
-*/
-export function findChunksToRequest2(world, ci, cj, ck) {
-    var toRequest = world._chunksToRequest
-    var numQueued = toRequest.count()
-    var maxQueued = 50
-    if (numQueued >= maxQueued) return
-
-    // handle changes to chunk sorting function
-    var sortDistFn = world.chunkSortingDistFn || defaultSortDistance
-    if (sortDistFn !== world._prevSortingFn) {
-        sortQueueByDistanceFrom(world, world._chunksSortedLocs, 0, 0, 0, true)
-        world._prevSortingFn = sortDistFn
-    }
-
-    // consume the pre-sorted positions array, checking each loc and 
-    // its reflections for locations that need to be added to request queue
-    var locsArr = world._chunksSortedLocs.arr
-    var ix = world._chunkAddSearchFrom
-    var maxIter = Math.min(20, locsArr.length / 10)
-    for (var ct = 0; ct < maxIter; ct++) {
-        var [di, dj, dk] = locsArr[ix++ % locsArr.length]
-        checkReflectedLocations(world, ci, cj, ck, di, dj, dk)
-        if (toRequest.count() >= maxQueued) break
-    }
-
-    // only advance start point if nothing is invalidated, 
-    // so that nearyby chunks stay at high priority in that case
-    if (world._chunksInvalidated.isEmpty()) {
-        world._chunkAddSearchFrom = ix % locsArr.length
-    }
-
-    // queue should be mostly sorted, but may not have been empty
-    sortQueueByDistanceFrom(world, toRequest, ci, cj, ck, false)
-}
-
 // Helpers for checking whether to add a location, and reflections of it
 var checkReflectedLocations = (world, ci, cj, ck, i, j, k) => {
-    for (let y = world.minY; y < world.maxY; y++) {
-        checkOneLocation(world, ci + i, y, ck + k)
-    }
+    checkOneLocation(world, ci + i, cj + j, ck + k)
     if (i !== k) checkOneLocation(world, ci + k, cj + j, ck + i)
     if (i > 0) checkReflectedLocations(world, ci, cj, ck, -i, j, k)
+    if (j > 0) checkReflectedLocations(world, ci, cj, ck, i, -j, k)
     if (k > 0) checkReflectedLocations(world, ci, cj, ck, i, j, -k)
 }
 // finally, the logic for each reflected location checked
