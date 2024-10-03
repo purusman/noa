@@ -123,7 +123,7 @@ export class Rendering {
         var scene = new Scene(this.engine)
         this.scene = scene
         // remove built-in listeners
-        scene.detachControl()
+        // scene.detachControl()
 
         // this disables a few babylon features that noa doesn't use
         scene.performancePriority = ScenePerformancePriority.Intermediate
