@@ -15,6 +15,7 @@ function CameraDefaults() {
     this.sensitivityY = 10
     this.initialZoom = 0
     this.zoomSpeed = 0.2
+    this.isMobile = false
 }
 
 
@@ -55,6 +56,8 @@ export class Camera {
     constructor(noa, opts) {
         opts = Object.assign({}, new CameraDefaults, opts)
         this.noa = noa
+
+        this.isMobile = opts.isMobile;
 
         /** Horizontal mouse sensitivity. Same scale as Overwatch (typical values around `5..10`) */
         this.sensitivityX = +opts.sensitivityX
@@ -227,7 +230,7 @@ export class Camera {
     */
 
     applyInputsToCamera() {
-
+        if (this.isMobile) return
         // conditional changes to mouse sensitivity
         var senseMult = this.sensitivityMult
         if (this.noa.container.supportsPointerLock) {

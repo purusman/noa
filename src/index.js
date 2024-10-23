@@ -54,6 +54,7 @@ var defaultOptions = {
     stickyFullscreen: false,
     skipDefaultHighlighting: false,
     originRebaseDistance: 25,
+    isMobile: false,
 }
 
 
