@@ -265,6 +265,31 @@ export class Camera {
         vec3.rotateY(dir, dir, origin, this.heading)
     }
 
+    /**
+     * Applies current touchPad dx/dy inputs to the camera angle and zoom
+     */
+    applyInputsToCameraMobile(dx, dy) {
+        if (this.isMobile) {
+            var conv = 0.0066 * Math.PI / 180
+            dx = dx * this.sensitivityX * conv
+            dy = dy * this.sensitivityY * conv
+            if (this.inverseX) dx = -dx
+            if (this.inverseY) dy = -dy
+
+            // normalize/clamp angles, update direction vector
+            var twopi = 2 * Math.PI
+            this.heading += (dx < 0) ? dx + twopi : dx
+            if (this.heading > twopi) this.heading -= twopi
+            var maxPitch = Math.PI / 2 - 0.001
+            this.pitch = Math.max(-maxPitch, Math.min(maxPitch, this.pitch))
+
+            vec3.set(this._dirVector, 0, 0, 1)
+            var dir = this._dirVector
+            var origin = originVector
+            vec3.rotateX(dir, dir, origin, this.pitch)
+            vec3.rotateY(dir, dir, origin, this.heading)
+    }
+
 
 
     /**

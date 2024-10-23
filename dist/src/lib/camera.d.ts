@@ -23,6 +23,7 @@ export class Camera {
     */
     constructor(noa: import('../index').Engine, opts: Partial<CameraDefaults>);
     noa: import("../index").Engine;
+    isMobile: boolean;
     /** Horizontal mouse sensitivity. Same scale as Overwatch (typical values around `5..10`) */
     sensitivityX: number;
     /** Vertical mouse sensitivity. Same scale as Overwatch (typical values around `5..10`) */
@@ -123,6 +124,9 @@ export class Camera {
     updateBeforeEntityRenderSystems(): void;
     /** @internal */
     updateAfterEntityRenderSystems(): void;
+     * Applies current touchPad dx/dy inputs to the camera angle and zoom
+     */
+    applyInputsToCameraMobile(dx: any, dy: any): void;
 }
 declare function CameraDefaults(): void;
 declare class CameraDefaults {
@@ -134,5 +138,6 @@ declare class CameraDefaults {
     sensitivityY: number;
     initialZoom: number;
     zoomSpeed: number;
+    isMobile: boolean;
 }
 export {};
