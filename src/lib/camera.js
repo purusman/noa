@@ -281,7 +281,7 @@ export class Camera {
             this.heading += (dx < 0) ? dx + twopi : dx
             if (this.heading > twopi) this.heading -= twopi
             var maxPitch = Math.PI / 2 - 0.001
-            this.pitch = Math.max(-maxPitch, Math.min(maxPitch, this.pitch))
+            this.pitch = Math.max(-maxPitch, Math.min(maxPitch, this.pitch + dy))
 
             vec3.set(this._dirVector, 0, 0, 1)
             var dir = this._dirVector
