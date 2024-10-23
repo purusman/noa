@@ -118,15 +118,16 @@ export class Camera {
     */
     applyInputsToCamera(): void;
     /**
+     * Applies current touchPad dx/dy inputs to the camera angle and zoom
+     */
+    applyInputsToCameraMobile(dx: any, dy: any): void;
+    /**
      *  Called before all renders, pre- and post- entity render systems
      * @internal
     */
     updateBeforeEntityRenderSystems(): void;
     /** @internal */
     updateAfterEntityRenderSystems(): void;
-     * Applies current touchPad dx/dy inputs to the camera angle and zoom
-     */
-    applyInputsToCameraMobile(dx: any, dy: any): void;
 }
 declare function CameraDefaults(): void;
 declare class CameraDefaults {

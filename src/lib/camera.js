@@ -288,6 +288,7 @@ export class Camera {
             var origin = originVector
             vec3.rotateX(dir, dir, origin, this.pitch)
             vec3.rotateY(dir, dir, origin, this.heading)
+        }
     }
 
 
